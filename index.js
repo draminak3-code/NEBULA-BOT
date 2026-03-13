@@ -1,36 +1,45 @@
 const mineflayer = require('mineflayer');
 
+// إعدادات البوت - سيتم جلب الـ IP من إعدادات Railway لزيادة الأمان
 const botOptions = {
-    host: process.env.SERVER_IP || 'IP_SERVER_HERE', // يفضل استخدامه كمتغير بيئة في Railway
+    host: process.env.SERVER_IP || 'nebula-adho.aternos.me', // ضع الآي بي هنا أو في Variables
     port: parseInt(process.env.SERVER_PORT) || 25565,
-    username: 'WEBORO_BOT',
-    version: '1.16.5'
+    username: 'NEBULA-BOT',
+    version: '1.21.11' // الإصدار المطلوب بدقة
 };
 
 function createBot() {
     const bot = mineflayer.createBot(botOptions);
 
     bot.on('spawn', () => {
-        console.log('✅ [WEBORO] البوت متصل الآن في السيرفر');
-        // حركة عشوائية بسيطة كل 30 ثانية لمنع الطرد
+        console.log(`✨ [NEBULA] تم تسجيل الدخول بنجاح كـ ${bot.username}`);
+        
+        // نظام حركة ذكي (يتحرك قليلاً كل 40 ثانية لمنع الطرد)
         setInterval(() => {
-            bot.setControlState('jump', true);
-            setTimeout(() => bot.setControlState('jump', false), 500);
-        }, 30000);
+            if (bot.entity) {
+                bot.setControlState('jump', true);
+                setTimeout(() => bot.setControlState('jump', false), 500);
+            }
+        }, 40000);
     });
 
+    // الرد التلقائي للتأكد من أن البوت يعمل
     bot.on('chat', (username, message) => {
         if (username === bot.username) return;
-        if (message === '!ping') bot.chat('Pong! I am alive.');
+        if (message.toLowerCase() === '!info') {
+            bot.chat('I am NEBULA-BOT, maintaining this server 24/7.');
+        }
     });
 
-    // نظام إعادة التشغيل التلقائي عند الطرد أو التوقف
+    // إعادة الاتصال التلقائي (Auto-Reconnect)
     bot.on('end', (reason) => {
-        console.log(`⚠️ تم الانفصال بسبب: ${reason}. إعادة المحاولة بعد 15 ثانية...`);
-        setTimeout(createBot, 15000);
+        console.log(`⚠️ تم قطع الاتصال: ${reason}. جاري إعادة المحاولة خلال 10 ثوانٍ...`);
+        setTimeout(createBot, 10000);
     });
 
-    bot.on('error', (err) => console.log('❌ خطأ في الاتصال:', err));
+    bot.on('error', (err) => {
+        console.log(`❌ خطأ تقني: ${err.message}`);
+    });
 }
 
 createBot();
