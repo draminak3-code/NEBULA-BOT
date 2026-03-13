@@ -1,66 +1,349 @@
 const mineflayer = require('mineflayer');
 
-// إعدادات البوت الاحترافية لنسخة 1.21.11
 const botOptions = {
-    host: process.env.SERVER_IP || 'IP_SERVER_HERE', // سيتم جلبه من Railway Variables
+    host: process.env.SERVER_IP || 'IP_HERE', 
     port: parseInt(process.env.SERVER_PORT) || 25565,
     username: 'NEBULA-BOT',
     version: '1.21.11',
-    checkTimeoutInterval: 60000, // حل مشكلة socketClosed بتمديد وقت الانتظار
-    auth: 'offline' // ضروري لسيرفرات Aternos المكركة
+    checkTimeoutInterval: 60000,
+    auth: 'offline' 
 };
 
 function createBot() {
     const bot = mineflayer.createBot(botOptions);
 
-    // عند دخول البوت للسيرفر
     bot.on('spawn', () => {
-        console.log(`🌌 [NEBULA-BOT] متصل الآن بنجاح على نسخة 1.21.11`);
+        console.log(`🌌 [NEBULA-BOT] متصل الآن. بانتظار أوامرك يا draminak!`);
         
-        // نظام Anti-AFK احترافي (حركة عشوائية لمنع كشف البوتات)
+        // نظام Anti-AFK
         setInterval(() => {
             if (bot.entity) {
                 const actions = ['jump', 'sneak'];
                 const randomAction = actions[Math.floor(Math.random() * actions.length)];
-                
                 bot.setControlState(randomAction, true);
                 setTimeout(() => bot.setControlState(randomAction, false), 1000);
-                
-                // تدوير الرأس بشكل عشوائي ليبدو كلاعب حقيقي
-                const yaw = (Math.random() - 0.5) * Math.PI;
-                const pitch = (Math.random() - 0.5) * Math.PI;
-                bot.look(yaw, pitch);
             }
         }, 30000);
     });
 
-    // الرد على الأوامر في الشات
+    // نظام الأوامر المخصص لـ draminak
     bot.on('chat', (username, message) => {
-        if (username === bot.username) return;
-        if (message === '!status') {
-            bot.chat('NEBULA-BOT is online 24/7! ✨');
+        // اسمك في اللعبة هو المفتاح
+        const myMaster = 'draminak'; 
+
+        if (username === myMaster) {
+            if (message === '!getmace') {
+                bot.chat('✨ جاري إرسال الـ Mace الأسطوري إليك يا draminak...');
+                // أمر الـ Mace مع أقوى التطويرات (Wind Burst III, Density V, Breach IV)
+                const maceCmd = `/give ${username} mace[enchantments={levels:{"minecraft:wind_burst":3,"minecraft:density":5,"minecraft:breach":4,"minecraft:sharpness":5,"minecraft:unbreaking":3,"minecraft:mending":1}}] 1`;
+                bot.chat(maceCmd);
+            } 
+            
+            else if (message === '!getwind') {
+                bot.chat('🌪️ استلم شحنات الرياح لتطير بالميس!');
+                bot.chat(`/give ${username} wind_charge 64`);
+            }
         }
     });
 
-    // معالجة الأخطاء والانفصال (Auto-Reconnect)
     bot.on('end', (reason) => {
-        console.log(`⚠️ تم الانفصال بسبب: ${reason}. إعادة المحاولة خلال 15 ثانية...`);
+        console.log(`⚠️ انفصال (${reason}). إعادة اتصال خلال 15 ثانية...`);
         setTimeout(createBot, 15000);
     });
 
     bot.on('error', (err) => {
-        if (err.message.includes('socketClosed')) {
-            console.log('🔄 تنبيه: تم إغلاق المقبس (Socket)، جاري إعادة الاتصال تلقائياً...');
-        } else {
-            console.log(`❌ خطأ تقني: ${err.message}`);
-        }
-    });
-
-    // منع البوت من التوقف عند حدوث خطأ غير متوقع
-    bot.on('kicked', (reason) => {
-        console.log(`❌ تم طرد البوت: ${reason}`);
+        console.log(`❌ خطأ: ${err.message}`);
     });
 }
 
-// تشغيل العملية
+createBot();const mineflayer = require('mineflayer');
+
+const botOptions = {
+    host: process.env.SERVER_IP || 'IP_HERE', 
+    port: parseInt(process.env.SERVER_PORT) || 25565,
+    username: 'NEBULA-BOT',
+    version: '1.21.11',
+    checkTimeoutInterval: 60000,
+    auth: 'offline' 
+};
+
+function createBot() {
+    const bot = mineflayer.createBot(botOptions);
+
+    bot.on('spawn', () => {
+        console.log(`🌌 [NEBULA-BOT] متصل الآن. بانتظار أوامرك يا draminak!`);
+        
+        // نظام Anti-AFK
+        setInterval(() => {
+            if (bot.entity) {
+                const actions = ['jump', 'sneak'];
+                const randomAction = actions[Math.floor(Math.random() * actions.length)];
+                bot.setControlState(randomAction, true);
+                setTimeout(() => bot.setControlState(randomAction, false), 1000);
+            }
+        }, 30000);
+    });
+
+    // نظام الأوامر المخصص لـ draminak
+    bot.on('chat', (username, message) => {
+        // اسمك في اللعبة هو المفتاح
+        const myMaster = 'draminak'; 
+
+        if (username === myMaster) {
+            if (message === '!getmace') {
+                bot.chat('✨ جاري إرسال الـ Mace الأسطوري إليك يا draminak...');
+                // أمر الـ Mace مع أقوى التطويرات (Wind Burst III, Density V, Breach IV)
+                const maceCmd = `/give ${username} mace[enchantments={levels:{"minecraft:wind_burst":3,"minecraft:density":5,"minecraft:breach":4,"minecraft:sharpness":5,"minecraft:unbreaking":3,"minecraft:mending":1}}] 1`;
+                bot.chat(maceCmd);
+            } 
+            
+            else if (message === '!getwind') {
+                bot.chat('🌪️ استلم شحنات الرياح لتطير بالميس!');
+                bot.chat(`/give ${username} wind_charge 64`);
+            }
+        }
+    });
+
+    bot.on('end', (reason) => {
+        console.log(`⚠️ انفصال (${reason}). إعادة اتصال خلال 15 ثانية...`);
+        setTimeout(createBot, 15000);
+    });
+
+    bot.on('error', (err) => {
+        console.log(`❌ خطأ: ${err.message}`);
+    });
+}
+
+createBot();const mineflayer = require('mineflayer');
+
+const botOptions = {
+    host: process.env.SERVER_IP || 'IP_HERE', 
+    port: parseInt(process.env.SERVER_PORT) || 25565,
+    username: 'NEBULA-BOT',
+    version: '1.21.11',
+    checkTimeoutInterval: 60000,
+    auth: 'offline' 
+};
+
+function createBot() {
+    const bot = mineflayer.createBot(botOptions);
+
+    bot.on('spawn', () => {
+        console.log(`🌌 [NEBULA-BOT] متصل الآن. بانتظار أوامرك يا draminak!`);
+        
+        // نظام Anti-AFK
+        setInterval(() => {
+            if (bot.entity) {
+                const actions = ['jump', 'sneak'];
+                const randomAction = actions[Math.floor(Math.random() * actions.length)];
+                bot.setControlState(randomAction, true);
+                setTimeout(() => bot.setControlState(randomAction, false), 1000);
+            }
+        }, 30000);
+    });
+
+    // نظام الأوامر المخصص لـ draminak
+    bot.on('chat', (username, message) => {
+        // اسمك في اللعبة هو المفتاح
+        const myMaster = 'draminak'; 
+
+        if (username === myMaster) {
+            if (message === '!getmace') {
+                bot.chat('✨ جاري إرسال الـ Mace الأسطوري إليك يا draminak...');
+                // أمر الـ Mace مع أقوى التطويرات (Wind Burst III, Density V, Breach IV)
+                const maceCmd = `/give ${username} mace[enchantments={levels:{"minecraft:wind_burst":3,"minecraft:density":5,"minecraft:breach":4,"minecraft:sharpness":5,"minecraft:unbreaking":3,"minecraft:mending":1}}] 1`;
+                bot.chat(maceCmd);
+            } 
+            
+            else if (message === '!getwind') {
+                bot.chat('🌪️ استلم شحنات الرياح لتطير بالميس!');
+                bot.chat(`/give ${username} wind_charge 64`);
+            }
+        }
+    });
+
+    bot.on('end', (reason) => {
+        console.log(`⚠️ انفصال (${reason}). إعادة اتصال خلال 15 ثانية...`);
+        setTimeout(createBot, 15000);
+    });
+
+    bot.on('error', (err) => {
+        console.log(`❌ خطأ: ${err.message}`);
+    });
+}
+
+createBot();const mineflayer = require('mineflayer');
+
+const botOptions = {
+    host: process.env.SERVER_IP || 'IP_HERE', 
+    port: parseInt(process.env.SERVER_PORT) || 25565,
+    username: 'NEBULA-BOT',
+    version: '1.21.11',
+    checkTimeoutInterval: 60000,
+    auth: 'offline' 
+};
+
+function createBot() {
+    const bot = mineflayer.createBot(botOptions);
+
+    bot.on('spawn', () => {
+        console.log(`🌌 [NEBULA-BOT] متصل الآن. بانتظار أوامرك يا draminak!`);
+        
+        // نظام Anti-AFK
+        setInterval(() => {
+            if (bot.entity) {
+                const actions = ['jump', 'sneak'];
+                const randomAction = actions[Math.floor(Math.random() * actions.length)];
+                bot.setControlState(randomAction, true);
+                setTimeout(() => bot.setControlState(randomAction, false), 1000);
+            }
+        }, 30000);
+    });
+
+    // نظام الأوامر المخصص لـ draminak
+    bot.on('chat', (username, message) => {
+        // اسمك في اللعبة هو المفتاح
+        const myMaster = 'draminak'; 
+
+        if (username === myMaster) {
+            if (message === '!getmace') {
+                bot.chat('✨ جاري إرسال الـ Mace الأسطوري إليك يا draminak...');
+                // أمر الـ Mace مع أقوى التطويرات (Wind Burst III, Density V, Breach IV)
+                const maceCmd = `/give ${username} mace[enchantments={levels:{"minecraft:wind_burst":3,"minecraft:density":5,"minecraft:breach":4,"minecraft:sharpness":5,"minecraft:unbreaking":3,"minecraft:mending":1}}] 1`;
+                bot.chat(maceCmd);
+            } 
+            
+            else if (message === '!getwind') {
+                bot.chat('🌪️ استلم شحنات الرياح لتطير بالميس!');
+                bot.chat(`/give ${username} wind_charge 64`);
+            }
+        }
+    });
+
+    bot.on('end', (reason) => {
+        console.log(`⚠️ انفصال (${reason}). إعادة اتصال خلال 15 ثانية...`);
+        setTimeout(createBot, 15000);
+    });
+
+    bot.on('error', (err) => {
+        console.log(`❌ خطأ: ${err.message}`);
+    });
+}
+
+createBot();const mineflayer = require('mineflayer');
+
+const botOptions = {
+    host: process.env.SERVER_IP || 'IP_HERE', 
+    port: parseInt(process.env.SERVER_PORT) || 25565,
+    username: 'NEBULA-BOT',
+    version: '1.21.11',
+    checkTimeoutInterval: 60000,
+    auth: 'offline' 
+};
+
+function createBot() {
+    const bot = mineflayer.createBot(botOptions);
+
+    bot.on('spawn', () => {
+        console.log(`🌌 [NEBULA-BOT] متصل الآن. بانتظار أوامرك يا draminak!`);
+        
+        // نظام Anti-AFK
+        setInterval(() => {
+            if (bot.entity) {
+                const actions = ['jump', 'sneak'];
+                const randomAction = actions[Math.floor(Math.random() * actions.length)];
+                bot.setControlState(randomAction, true);
+                setTimeout(() => bot.setControlState(randomAction, false), 1000);
+            }
+        }, 30000);
+    });
+
+    // نظام الأوامر المخصص لـ draminak
+    bot.on('chat', (username, message) => {
+        // اسمك في اللعبة هو المفتاح
+        const myMaster = 'draminak'; 
+
+        if (username === myMaster) {
+            if (message === '!getmace') {
+                bot.chat('✨ جاري إرسال الـ Mace الأسطوري إليك يا draminak...');
+                // أمر الـ Mace مع أقوى التطويرات (Wind Burst III, Density V, Breach IV)
+                const maceCmd = `/give ${username} mace[enchantments={levels:{"minecraft:wind_burst":3,"minecraft:density":5,"minecraft:breach":4,"minecraft:sharpness":5,"minecraft:unbreaking":3,"minecraft:mending":1}}] 1`;
+                bot.chat(maceCmd);
+            } 
+            
+            else if (message === '!getwind') {
+                bot.chat('🌪️ استلم شحنات الرياح لتطير بالميس!');
+                bot.chat(`/give ${username} wind_charge 64`);
+            }
+        }
+    });
+
+    bot.on('end', (reason) => {
+        console.log(`⚠️ انفصال (${reason}). إعادة اتصال خلال 15 ثانية...`);
+        setTimeout(createBot, 15000);
+    });
+
+    bot.on('error', (err) => {
+        console.log(`❌ خطأ: ${err.message}`);
+    });
+}
+
+createBot();const mineflayer = require('mineflayer');
+
+const botOptions = {
+    host: process.env.SERVER_IP || 'IP_HERE', 
+    port: parseInt(process.env.SERVER_PORT) || 25565,
+    username: 'NEBULA-BOT',
+    version: '1.21.11',
+    checkTimeoutInterval: 60000,
+    auth: 'offline' 
+};
+
+function createBot() {
+    const bot = mineflayer.createBot(botOptions);
+
+    bot.on('spawn', () => {
+        console.log(`🌌 [NEBULA-BOT] متصل الآن. بانتظار أوامرك يا draminak!`);
+        
+        // نظام Anti-AFK
+        setInterval(() => {
+            if (bot.entity) {
+                const actions = ['jump', 'sneak'];
+                const randomAction = actions[Math.floor(Math.random() * actions.length)];
+                bot.setControlState(randomAction, true);
+                setTimeout(() => bot.setControlState(randomAction, false), 1000);
+            }
+        }, 30000);
+    });
+
+    // نظام الأوامر المخصص لـ draminak
+    bot.on('chat', (username, message) => {
+        // اسمك في اللعبة هو المفتاح
+        const myMaster = 'draminak'; 
+
+        if (username === myMaster) {
+            if (message === '!getmace') {
+                bot.chat('✨ جاري إرسال الـ Mace الأسطوري إليك يا draminak...');
+                // أمر الـ Mace مع أقوى التطويرات (Wind Burst III, Density V, Breach IV)
+                const maceCmd = `/give ${username} mace[enchantments={levels:{"minecraft:wind_burst":3,"minecraft:density":5,"minecraft:breach":4,"minecraft:sharpness":5,"minecraft:unbreaking":3,"minecraft:mending":1}}] 1`;
+                bot.chat(maceCmd);
+            } 
+            
+            else if (message === '!getwind') {
+                bot.chat('🌪️ استلم شحنات الرياح لتطير بالميس!');
+                bot.chat(`/give ${username} wind_charge 64`);
+            }
+        }
+    });
+
+    bot.on('end', (reason) => {
+        console.log(`⚠️ انفصال (${reason}). إعادة اتصال خلال 15 ثانية...`);
+        setTimeout(createBot, 15000);
+    });
+
+    bot.on('error', (err) => {
+        console.log(`❌ خطأ: ${err.message}`);
+    });
+}
+
 createBot();
