@@ -63,4 +63,23 @@ function createBot() {
     });
 }
 
-createBot();
+createBot(
+
+    // دالة لجعل البوت يمسك الدرع تلقائياً
+function equipShield() {
+    const shield = bot.inventory.items().find(item => item.name === 'shield');
+    if (shield) {
+        bot.equip(shield, 'off-hand', (err) => {
+            if (err) {
+                console.log('❌ فشل في حمل الدرع:', err.message);
+            } else {
+                console.log('🛡️ NEBULA-BOT الآن يحمل الدرع');
+            }
+        });
+    }
+}
+
+// تنفيذ المحاولة عند الدخول أو عند تغير الحقيبة
+bot.on('spawn', equipShield);
+bot.on('playerCollect', equipShield); // يحاول لبسه إذا التقطه من الأرض
+);
