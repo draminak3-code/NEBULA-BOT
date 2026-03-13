@@ -1,66 +1,57 @@
-const mineflayer = require('mineflayer');
+# 🌌 NEBULA-BOT | 24/7 Minecraft Server Keeper
 
-// إعدادات البوت الاحترافية
-const botOptions = {
-    host: process.env.SERVER_IP || 'IP_HERE', // يتم جلب الآي بي من Variables في Railway
-    port: parseInt(process.env.SERVER_PORT) || 25565,
-    username: 'NEBULA-BOT',
-    version: '1.21.11',
-    checkTimeoutInterval: 60000,
-    auth: 'offline' // متوافق مع سيرفرات Aternos المكركة
-};
+![Version](https://img.shields.io/badge/version-1.2.1-blue.svg)
+![Node.js](https://img.shields.io/badge/Node.js-20.x-green.svg)
+![Mineflayer](https://img.shields.io/badge/Mineflayer-Latest-orange.svg)
+![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-Active-success.svg)
+![Developer](https://img.shields.io/badge/Developed_by-WEBORO-darkred.svg)
 
-function createBot() {
-    const bot = mineflayer.createBot(botOptions);
+بوت ماين كرافت احترافي ومستقل، مبرمج بلغة **Node.js** ومكتبة **Mineflayer**. تم تصميم هذا البوت خصيصاً لإبقاء سيرفرات ماين كرافت (مثل Aternos) متصلة بالإنترنت وتعمل على مدار الساعة (24/7) دون الحاجة لأي استضافة مدفوعة، معتمداً كلياً على بيئة تشغيل **GitHub Actions**.
 
-    // عند دخول البوت للسيرفر
-    bot.on('spawn', () => {
-        console.log(`🌌 [NEBULA-BOT] متصل الآن بنجاح على نسخة 1.21.11`);
-        
-        // نظام Anti-AFK (حركة عشوائية لمنع الطرد من Aternos)
-        setInterval(() => {
-            if (bot.entity) {
-                const actions = ['jump', 'sneak'];
-                const randomAction = actions[Math.floor(Math.random() * actions.length)];
-                bot.setControlState(randomAction, true);
-                setTimeout(() => bot.setControlState(randomAction, false), 1000);
-            }
-        }, 30000);
-    });
+---
 
-    // نظام الأوامر: إعطاء الـ Mace والـ Wind Charge
-    bot.on('chat', (username, message) => {
-        // ضع اسمك هنا لكي يستجيب البوت لك فقط
-        const myMaster = 'Guerbous_Yassin'; 
+## ✨ المميزات الرئيسية (Features)
 
-        if (username === myMaster) {
-            if (message === '!getmace') {
-                bot.chat('✨ جاري استدعاء الـ Mace الأسطوري مع Wind Burst III...');
-                // أمر الـ Mace مع أقوى التطويرات لنسخة 1.21.x
-                const maceCmd = `/give ${username} mace[enchantments={levels:{"minecraft:wind_burst":3,"minecraft:density":5,"minecraft:breach":4,"minecraft:sharpness":5,"minecraft:unbreaking":3,"minecraft:mending":1}}] 1`;
-                bot.chat(maceCmd);
-            } 
-            
-            else if (message === '!getwind') {
-                bot.chat('🌪️ جاري إعطاؤك شحنات الرياح (Wind Charges)...');
-                bot.chat(`/give ${username} wind_charge 64`);
-            }
-        }
-    });
+- **استضافة مجانية 100%:** يعمل بالكامل على خوادم GitHub Actions.
+- **اتصال دائم (24/7):** نظام إعادة اتصال تلقائي (Auto-Reconnect) ذكي عند انقطاع السيرفر.
+- **التوافق التام:** يدعم أحدث إصدارات ماين كرافت (1.21+) بالإضافة للإصدارات المستقرة.
+- **نظام الحماية (Anti-AFK):** يتفادى الطرد من السيرفرات بسبب الخمول.
+- **كود نظيف (Clean Code):** خالٍ من أي ارتباطات بمنصات خارجية مثل Railway.
 
-    // معالجة الانفصال وإعادة الاتصال التلقائي
-    bot.on('end', (reason) => {
-        console.log(`⚠️ تم الانفصال بسبب: ${reason}. جاري إعادة المحاولة خلال 15 ثانية...`);
-        setTimeout(createBot, 15000);
-    });
+---
 
-    bot.on('error', (err) => {
-        if (err.message.includes('socketClosed')) {
-            console.log('🔄 Aternos أغلق المقبس، جاري إعادة الاتصال...');
-        } else {
-            console.log(`❌ خطأ: ${err.message}`);
-        }
-    });
-}
+## 🚀 طريقة التشغيل والإعداد (Setup & Installation)
 
-createBot();
+بما أن المشروع يعتمد على الـ Actions، لا تحتاج لتشغيل أي شيء على جهازك الشخصي. فقط اتبع الخطوات التالية:
+
+### 1. إعداد المتغيرات السرية (Repository Secrets)
+اذهب إلى إعدادات المستودع (Settings) -> ثم (Secrets and variables) -> ثم (Actions) وقم بإضافة المتغيرات التالية:
+- `SERVER_IP`: عنوان الآي بي الخاص بالسيرفر (مثال: `nebula.aternos.me`).
+- `SERVER_PORT`: البورت الخاص بالسيرفر (مثال: `25565` أو البورت المخصص لك).
+
+### 2. تفعيل سير العمل (Enable Workflow)
+- اذهب إلى تبويب **Actions** في أعلى المستودع.
+- اضغط على **"I understand my workflows, go ahead and enable them"** (إذا ظهرت لك).
+- اضغط على Workflow المسمى **NEBULA-BOT 24/7** واختر **Run workflow**.
+
+---
+
+## 🛠️ البنية التقنية (Tech Stack)
+
+- **اللغة:** JavaScript (Node.js v20.x)
+- **المكتبة الأساسية:** [Mineflayer](https://github.com/PrismarineJS/mineflayer)
+- **بيئة التشغيل (CI/CD):** GitHub Actions
+
+---
+
+## 📄 ملاحظات هامة (Important Notes)
+
+- تأكد من إعطاء البوت رتبة **Operator (OP)** في السيرفر ليتمكن من الدخول في وضع الإبداع (Creative Mode) وتنفيذ الأوامر.
+- إذا كنت تستخدم سيرفرات Aternos، راقب الـ Console للتأكد من عدم وجود إضافات (Plugins) تمنع البوت من تنفيذ الأوامر مثل `/gamemode`.
+
+---
+
+<div align="center">
+  <b>تم التطوير والبرمجة بواسطة <a href="http://weboro.gt.tc">WEBORO Agency</a> © 2026</b><br>
+  <i>"نصنع حلولاً برمجية ذكية"</i>
+</div>
