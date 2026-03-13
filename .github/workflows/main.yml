@@ -11,9 +11,11 @@ jobs:
   run-bot:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608
+      # إصدار مستقر لـ Checkout (v4.1.1)
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
       
       - name: Setup Node.js
+        # إصدار مستقر لـ Setup-Node (v4.0.2)
         uses: actions/setup-node@60edb5dd545a775178f5252478337817473d22d1
         with:
           node-version: '20'
