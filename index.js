@@ -1,42 +1,59 @@
 const mineflayer = require('mineflayer');
 
-const botArgs = {
+// إعدادات الاتصال عبر GitHub Secrets
+const serverConfig = {
     host: process.env.SERVER_IP,
     port: parseInt(process.env.SERVER_PORT) || 25565,
-    username: 'NEBULA-BOT',
-    version: false 
+    version: false // تحديد النسخة تلقائياً
 };
 
-let bot;
+// قائمة أسماء بوتات الـ AFK (يمكنك زيادة الأسماء كما تشاء)
+const afkBotNames = ['NEBULA_AFK_1', 'NEBULA_AFK_2', 'NEBULA_AFK_3'];
 
-function createBot() {
-    bot = mineflayer.createBot(botArgs);
+function createAFKBot(name) {
+    const bot = mineflayer.createBot({
+        ...serverConfig,
+        username: name
+    });
 
-    function startAntiAFK() {
+    // --- نظام الـ AFK الصامت ---
+    function startSilentAFK() {
         setInterval(() => {
             if (bot.entity) {
-                // ألغينا القفز والمشي تماماً
-                // نكتفي فقط بتغيير زاوية النظر (Look) كل 30 ثانية
-                // هذه الحركة "وهمية" لا تمنع الماء من دفع الجسم
-                const yaw = Math.random() * Math.PI * 2;
-                bot.look(yaw, 0); 
-
-                console.log("[WEBORO] Anti-AFK: Head rotation only. Physics is free.");
+                // تحريك الرأس فقط لتجنب كشف الخمول
+                bot.look(Math.random() * Math.PI * 2, 0);
+                console.log(`[AFK-System] ${name}: Active and flowing with water.`);
             }
-        }, 30000); 
+        }, 30000); // كل 30 ثانية
     }
 
     bot.on('spawn', () => {
-        console.log(`[✔] ${bot.username} joined.`);
-        bot.chat('/gamemode creative');
-        startAntiAFK();
+        console.log(`[✔] ${name} joined for AFK duty.`);
+        bot.chat('/gamemode creative'); // تأمين البوت
+        startSilentAFK();
     });
 
+    // إيقاف أي حركة برمجية لضمان الانجراف التام مع تيارات المياه
+    bot.on('physicTick', () => {
+        bot.setControlState('jump', false);
+        bot.setControlState('forward', false);
+        bot.setControlState('back', false);
+        bot.setControlState('left', false);
+        bot.setControlState('right', false);
+    });
+
+    // إعادة الاتصال التلقائي
     bot.on('end', () => {
-        setTimeout(createBot, 30000); 
+        console.log(`[!] ${name} disconnected. Reconnecting in 30 seconds...`);
+        setTimeout(() => createAFKBot(name), 30000);
     });
 
-    bot.on('error', (err) => console.log(`[✘] Error: ${err.message}`));
+    bot.on('error', (err) => {
+        console.log(`[✘] ${name} Error: ${err.message}`);
+    });
 }
 
-createBot();
+// تشغيل مصفوفة البوتات
+afkBotNames.forEach(name => {
+    createAFKBot(name);
+});
