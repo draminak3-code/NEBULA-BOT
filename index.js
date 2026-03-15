@@ -1,59 +1,62 @@
 const mineflayer = require('mineflayer');
 
-// إعدادات الاتصال عبر GitHub Secrets
 const serverConfig = {
     host: process.env.SERVER_IP,
     port: parseInt(process.env.SERVER_PORT) || 25565,
-    version: false // تحديد النسخة تلقائياً
+    version: false 
 };
 
-// قائمة أسماء بوتات الـ AFK (يمكنك زيادة الأسماء كما تشاء)
+// قائمة الأسماء (يفضل أن تكون مختلفة قليلاً لتجنب الفلتر)
 const afkBotNames = ['NEBULA_AFK_1', 'NEBULA_AFK_2', 'NEBULA_AFK_3'];
 
 function createAFKBot(name) {
     const bot = mineflayer.createBot({
         ...serverConfig,
-        username: name
+        username: name,
+        hideErrors: true // إخفاء الأخطاء المزعجة من الكونسول
     });
 
-    // --- نظام الـ AFK الصامت ---
     function startSilentAFK() {
-        setInterval(() => {
+        const interval = setInterval(() => {
             if (bot.entity) {
-                // تحريك الرأس فقط لتجنب كشف الخمول
                 bot.look(Math.random() * Math.PI * 2, 0);
-                console.log(`[AFK-System] ${name}: Active and flowing with water.`);
             }
-        }, 30000); // كل 30 ثانية
+        }, 40000);
+        
+        bot.once('end', () => clearInterval(interval));
     }
 
     bot.on('spawn', () => {
-        console.log(`[✔] ${name} joined for AFK duty.`);
-        bot.chat('/gamemode creative'); // تأمين البوت
+        console.log(`[✔] ${name} has entered and is now stable.`);
+        bot.chat('/gamemode creative');
         startSilentAFK();
     });
 
-    // إيقاف أي حركة برمجية لضمان الانجراف التام مع تيارات المياه
     bot.on('physicTick', () => {
+        // منع أي حركة قد تؤدي لتعليق البوت أو طرده
         bot.setControlState('jump', false);
         bot.setControlState('forward', false);
-        bot.setControlState('back', false);
-        bot.setControlState('left', false);
-        bot.setControlState('right', false);
     });
 
-    // إعادة الاتصال التلقائي
     bot.on('end', () => {
-        console.log(`[!] ${name} disconnected. Reconnecting in 30 seconds...`);
-        setTimeout(() => createAFKBot(name), 30000);
+        // وقت عشوائي لإعادة الاتصال لتجنب التصادم بين البوتات
+        const reconnectDelay = Math.floor(Math.random() * (60000 - 40000) + 40000);
+        console.log(`[!] ${name} out. Rejoining in ${reconnectDelay/1000}s...`);
+        setTimeout(() => createAFKBot(name), reconnectDelay);
     });
 
     bot.on('error', (err) => {
-        console.log(`[✘] ${name} Error: ${err.message}`);
+        // تجاهل ECONNRESET لأنه سيحاول مرة أخرى تلقائياً
+        if (err.code !== 'ECONNRESET') {
+            console.log(`[✘] ${name} Error: ${err.message}`);
+        }
     });
 }
 
-// تشغيل مصفوفة البوتات
-afkBotNames.forEach(name => {
-    createAFKBot(name);
+// زيادة الفاصل الزمني لـ 30 ثانية بين كل بوت لضمان دخول الجميع
+afkBotNames.forEach((name, index) => {
+    setTimeout(() => {
+        console.log(`[→] Attempting to connect ${name}...`);
+        createAFKBot(name);
+    }, index * 30000); 
 });
